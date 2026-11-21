@@ -1,0 +1,33 @@
+<?php
+spl_autoload_register(function ($class) {
+    require "class/{$class}.php";
+});
+require "inc/init.php";
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST["name"];
+    $pass = $_POST["pass"];
+    $error = Auth::login($name, $pass);
+}
+?>
+<?php include "inc/header.php" ?>
+<h3 class="text-center">ĐĂNG NHẬP</h3>
+<form method="post" class="m-auto">
+    <div class="mb-3">
+        <label for="name" class="form-label">UserName</label>
+        <input class="form-control" type="text" placeholder="Enter your UserName" name="name" id="name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="pass" class="form-label">Password</label>
+        <input class="form-control" type="password" placeholder="••••••••••••••••••••••••••••" name="pass" id="pass" />
+    </div>
+
+    <div class="text-center pt-2">
+        <button type="submit" class="btn btn-primary text-center">ĐĂNG NHẬP</button><br />
+        <span class="text-danger"><?= $error ?></span>
+    </div>
+</form>
+<?php include "inc/footer.php" ?>

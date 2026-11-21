@@ -1,0 +1,106 @@
+mydb_admin
+eBA5U28cw-K_7hfr
+
+$host = 'localhost';
+$db = 'mydb';
+$user = 'mydb_admin';
+$pass = 'eBA5U28cw-K_7hfr';
+
+$dsn = "mysql:host=$host; dbname=$db; charset=UTF8";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass);
+    if ($pdo) {
+        echo "Connect Successful.";
+    }
+} catch (PDOException $ex) {
+    echo $ex->getMessage();
+    exit;
+}
+
+echo "<br /><br />";
+
+$sql = 'SELECT * FROM product';
+$stmt = $pdo->prepare($sql);
+
+if ($stmt->execute()) {
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    var_dump($products);
+} else {
+    $error = $stmt->errorInfo();
+    var_dump($error);
+}
+
+echo "<br /><br />";
+
+$sql = "SELECT * FROM product WHERE id=:id";
+$stmt = $pdo->prepare($sql);
+
+$id = $_GET['id'] ?? 1;
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+if ($stmt->execute()) {
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    var_dump($products);
+} else {
+    $error = $stmt->errorInfo();
+    var_dump($error);
+}
+
+echo "<br /><br />";
+
+$sql = "INSERT INTO product(name, description, price) VALUES (:name, :desc, :price)";
+$stmt = $pdo->prepare($sql);
+
+$name = "Đồ lót chuột";
+$desc = "Đồ lót chuột Philip Pikachu";
+$price = 10000;
+
+$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+$stmt->bindParam(':desc', $desc, PDO::PARAM_STR);
+$stmt->bindParam(':price', $price, PDO::PARAM_INT);
+
+if ($stmt->execute()) {
+    $id = $pdo->lastInsertId();
+    echo "Insert thành công, id mới là $id";
+} else {
+    $error = $stmt->errorInfo();
+    var_dump($error);
+}
+
+echo "<br /><br />";
+
+$sql = "UPDATE product SET name=:name, description=:desc, price=:price WHERE id=:id";
+$stmt = $pdo->prepare($sql);
+
+$name = "Sạc dự phòng";
+$desc = "Sạc dự phòng 20000mAh";
+$price = 500000;
+$id = 5;
+
+$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+$stmt->bindParam(':desc', $desc, PDO::PARAM_STR);
+$stmt->bindParam(':price', $price, PDO::PARAM_INT);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+if ($stmt->execute()) {
+    echo "Update thành công.";
+} else {
+    $error = $stmt->errorInfo();
+    var_dump($error);
+}
+
+echo "<br /><br />";
+
+$sql = "DELETE FROM product WHERE id = :id";
+$stmt = $pdo->prepare($sql);
+
+$id = 5;
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+if ($stmt->execute()) {
+    echo "Delete thành công.";
+} else {
+    $error = $stmt->errorInfo();
+    var_dump($error);
+}
